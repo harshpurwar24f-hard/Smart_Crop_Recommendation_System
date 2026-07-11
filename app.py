@@ -1,9 +1,16 @@
-import streamlit as st
-import pandas as pd
-import numpy as np
-from PIL import Image
+import os
+import json
+import warnings
+
 import joblib
-import os 
+import numpy as np
+import pandas as pd
+import streamlit as st
+from PIL import Image
+from sklearn.exceptions import InconsistentVersionWarning
+from sklearn.metrics import accuracy_score, r2_score
+
+warnings.filterwarnings("ignore", category=InconsistentVersionWarning)
 
 
 # ==========================================================
@@ -13,6 +20,7 @@ import os
 MODEL_DIR = "models"
 DATASET_DIR = "datasets"
 ASSET_DIR = "assets"
+METRICS_PATH = os.path.join(MODEL_DIR, "model_metrics.json")
 
 
 
@@ -365,6 +373,184 @@ def load_resources():
 
 
 resources = load_resources()
+
+
+def evaluate_model_accuracies(resource_dict):
+    """Evaluate loaded models on the bundled datasets and return metrics."""
+    metrics = {}
+
+    crop_df = pd.read_csv(os.path.join(DATASET_DIR, "Crop_recommendation_featured.csv"))
+    crop_df = crop_df.copy()
+
+    for column in ["temperature_category", "rainfall_category", "ph_category"]:
+        crop_df[column] = resource_dict["crop_feature_encoders"][column].transform(
+            crop_df[column].astype(str)
+        )
+
+    crop_features = [
+        "n",
+        "p",
+        "k",
+        "temperature",
+        "humidity",
+        "ph",
+        "rainfall",
+        "total_npk",
+        "soil_fertility_index",
+        "npk_balance_ratio",
+        "temperature_category",
+        "rainfall_category",
+        "ph_category"
+    ]
+
+    crop_frame = pd.DataFrame(crop_df[crop_features], columns=crop_features)
+    crop_scaled = resource_dict["crop_scaler"].transform(crop_frame)
+    crop_pred = resource_dict["crop_model"].predict(crop_scaled)
+    crop_true = resource_dict["crop_target_encoder"].transform(crop_df["label"].astype(str))
+    metrics["Crop Recommendation"] = {
+        "metric": "Accuracy",
+        "value": float(accuracy_score(crop_true, crop_pred))
+    }
+
+    yield_df = pd.read_csv(os.path.join(DATASET_DIR, "crop_yield_featured.csv"))
+    yield_df = yield_df.copy()
+    yield_df["fertilizer_used"] = yield_df["fertilizer_used"].fillna("Unknown")
+    yield_df["fertilizer_used"] = yield_df["fertilizer_used"].astype(str)
+
+    categorical_columns = [
+        "region",
+        "soil_type",
+        "crop",
+        "fertilizer_used",
+        "weather_condition",
+        "climate_zone",
+        "growing_season"
+    ]
+
+    for column in categorical_columns:
+        encoder = resource_dict["yield_feature_encoders"][column]
+        values = yield_df[column].astype(str)
+        values = values.where(values.isin(encoder.classes_), "Unknown")
+        yield_df[column] = encoder.transform(values)
+
+    yield_features = [
+        "region",
+        "soil_type",
+        "crop",
+        "rainfall_mm",
+        "temperature_celsius",
+        "fertilizer_used",
+        "irrigation_used",
+        "weather_condition",
+        "days_to_harvest",
+        "water_availability_index",
+        "climate_zone",
+        "growing_season"
+    ]
+
+    yield_frame = pd.DataFrame(yield_df[yield_features], columns=yield_features)
+    yield_scaled = resource_dict["yield_scaler"].transform(yield_frame)
+    yield_pred = resource_dict["yield_model"].predict(yield_scaled)
+    metrics["Yield Prediction"] = {
+        "metric": "R² Score",
+        "value": float(r2_score(yield_df["yield_tons_per_hectare"], yield_pred))
+    }
+
+    fertilizer_df = pd.read_csv(os.path.join(DATASET_DIR, "fertilizer_recommendation_featured.csv"))
+    fertilizer_df = fertilizer_df.copy()
+
+    fertilizer_df["soil_ph_category"] = pd.cut(
+        fertilizer_df["soil_ph"],
+        bins=[0, 6.5, 7.5, 14],
+        labels=["Acidic", "Neutral", "Alkaline"],
+        include_lowest=True
+    )
+    fertilizer_df["moisture_category"] = pd.cut(
+        fertilizer_df["soil_moisture"],
+        bins=resource_dict["fertilizer_bins"]["moisture_bins"],
+        labels=["Low", "Medium", "High"],
+        include_lowest=True
+    )
+    fertilizer_df["yield_category"] = pd.cut(
+        fertilizer_df["yield_last_season"],
+        bins=resource_dict["fertilizer_bins"]["yield_bins"],
+        labels=["Low", "Medium", "High"],
+        include_lowest=True
+    )
+    fertilizer_df["nutrient_richness"] = pd.cut(
+        fertilizer_df["total_nutrients"],
+        bins=resource_dict["fertilizer_bins"]["nutrient_bins"],
+        labels=["Poor", "Average", "Rich"],
+        include_lowest=True
+    )
+
+    for column, encoder in resource_dict["fertilizer_feature_encoders"].items():
+        if column in fertilizer_df.columns:
+            fertilizer_df[column] = encoder.transform(fertilizer_df[column].astype(str))
+
+    fertilizer_features = [
+        "soil_type",
+        "soil_ph",
+        "soil_moisture",
+        "organic_carbon",
+        "electrical_conductivity",
+        "nitrogen_level",
+        "phosphorus_level",
+        "potassium_level",
+        "temperature",
+        "humidity",
+        "rainfall",
+        "crop_type",
+        "crop_growth_stage",
+        "season",
+        "irrigation_type",
+        "previous_crop",
+        "region",
+        "fertilizer_used_last_season",
+        "yield_last_season",
+        "total_nutrients",
+        "soil_health_index",
+        "climate_index",
+        "soil_ph_category",
+        "moisture_category",
+        "yield_category",
+        "nutrient_richness"
+    ]
+
+    fertilizer_pred = resource_dict["fertilizer_model"].predict(fertilizer_df[fertilizer_features])
+    fertilizer_true = resource_dict["fertilizer_target_encoder"].transform(
+        fertilizer_df["recommended_fertilizer"].astype(str)
+    )
+    metrics["Fertilizer Recommendation"] = {
+        "metric": "Accuracy",
+        "value": float(accuracy_score(fertilizer_true, fertilizer_pred))
+    }
+
+    print("Model accuracies:")
+    for name, result in metrics.items():
+        if result["metric"] == "Accuracy":
+            print(f"{name}: {result['metric']} = {result['value']:.4f}")
+        else:
+            print(f"{name}: {result['metric']} = {result['value']:.4f}")
+
+    return metrics
+
+
+def load_validation_metrics():
+    """Load hold-out metrics produced by train_models.py.
+
+    These are deliberately kept separate from the dashboard data so the UI
+    does not present training-set scores as real-world model performance.
+    """
+    if not os.path.exists(METRICS_PATH):
+        return {}
+
+    with open(METRICS_PATH, "r", encoding="utf-8") as metric_file:
+        return json.load(metric_file)
+
+
+model_metrics = load_validation_metrics()
+
 # ==========================================================
 # Verify Loaded Resources
 # ==========================================================
@@ -1176,6 +1362,20 @@ elif page == "Analysis":
     # ==========================================================
 
     st.markdown("<h3>📊 System Statistics</h3>", unsafe_allow_html=True)
+
+    st.markdown("<h4>🧠 Model Performance</h4>", unsafe_allow_html=True)
+    if model_metrics:
+        metric_cols = st.columns(3)
+        for col, (name, result) in zip(metric_cols, model_metrics.items()):
+            with col:
+                if result["metric"] == "Accuracy":
+                    value_text = f"{result['value']:.2%}"
+                else:
+                    value_text = f"{result['value']:.3f}"
+                st.metric(label=name, value=value_text, delta=result["metric"])
+        st.caption("Scores are from a stratified held-out validation set, not the training data.")
+    else:
+        st.info("Run `python train_models.py` to generate held-out validation metrics.")
 
     col1, col2, col3 = st.columns(3)
 

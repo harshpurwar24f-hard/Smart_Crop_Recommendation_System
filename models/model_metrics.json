@@ -1,0 +1,10 @@
+{
+  "Crop Recommendation": {
+    "metric": "Accuracy",
+    "value": 0.990909090909091
+  },
+  "Yield Prediction": {
+    "metric": "R\u00b2 Score",
+    "value": 0.7440600164522988
+  }
+}
