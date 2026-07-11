@@ -24,24 +24,239 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS
+# Custom CSS - Modern UI Design
 st.markdown("""
     <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+    
+    * {
+        font-family: 'Poppins', sans-serif;
+    }
+    
     .main {
-        padding: 0rem 0rem;
+        padding: 1rem 2rem;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     }
+    
+    /* Header Container */
     .header-container {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        padding: 2rem;
-        border-radius: 10px;
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #00d4ff 100%);
+        padding: 3rem 2.5rem;
+        border-radius: 20px;
         color: white;
-        margin-bottom: 2rem;
+        margin-bottom: 2.5rem;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        text-align: center;
     }
+    
+    .header-container h1 {
+        font-size: 2.8rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    }
+    
+    .header-container p {
+        font-size: 1.1rem;
+        font-weight: 300;
+        opacity: 0.95;
+    }
+    
+    /* Input Section Styling */
+    .input-section {
+        background: white;
+        padding: 2rem;
+        border-radius: 15px;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(0, 200, 255, 0.1);
+    }
+    
+    /* Metric Cards */
     .metric-card {
-        background: #f0f2f6;
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+        padding: 1.8rem;
+        border-radius: 12px;
+        border-left: 5px solid #00d4ff;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .metric-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+    }
+    
+    /* Result Cards */
+    .result-card {
+        background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 15px;
+        margin: 1.5rem 0;
+        box-shadow: 0 8px 30px rgba(0, 212, 255, 0.3);
+        text-align: center;
+    }
+    
+    .result-card h2 {
+        font-size: 1.8rem;
+        margin-bottom: 0.5rem;
+        font-weight: 700;
+    }
+    
+    .result-card-secondary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        margin: 0.8rem 0;
+        box-shadow: 0 5px 20px rgba(102, 126, 234, 0.25);
+    }
+    
+    /* Top Predictions Grid */
+    .prediction-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        margin: 1.5rem 0;
+    }
+    
+    .prediction-item {
+        background: white;
+        padding: 1.2rem;
+        border-radius: 10px;
+        border: 2px solid #e0e0e0;
+        text-align: center;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+    
+    .prediction-item:hover {
+        border-color: #00d4ff;
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 212, 255, 0.2);
+    }
+    
+    .prediction-rank {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #00d4ff;
+        margin-bottom: 0.5rem;
+    }
+    
+    .prediction-name {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #1e3c72;
+        margin-bottom: 0.5rem;
+    }
+    
+    .prediction-confidence {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #00d4ff;
+    }
+    
+    /* Slider Container */
+    .slider-container {
+        background: #f8f9fa;
+        padding: 1.2rem;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+    }
+    
+    /* Info Boxes */
+    .info-box {
+        background: linear-gradient(135deg, #e0f7ff 0%, #b3e5fc 100%);
+        border-left: 4px solid #00d4ff;
+        padding: 1.2rem;
+        border-radius: 10px;
+        color: #01579b;
+        margin-bottom: 1rem;
+    }
+    
+    .success-box {
+        background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+        border-left: 4px solid #4caf50;
+        padding: 1.2rem;
+        border-radius: 10px;
+        color: #1b5e20;
+        margin: 1rem 0;
+    }
+    
+    /* Button Styling */
+    .stButton > button {
+        background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+        color: white;
+        border: none;
+        padding: 0.8rem 2rem;
+        border-radius: 25px;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+        width: 100%;
+    }
+    
+    .stButton > button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 25px rgba(0, 212, 255, 0.4);
+        background: linear-gradient(135deg, #00e5ff 0%, #00acc1 100%);
+    }
+    
+    /* Expander Styling */
+    .streamlit-expanderHeader {
+        background: linear-gradient(135deg, #f5f7fa 0%, #e0e7ff 100%);
+        border-radius: 10px !important;
+        border: 1px solid #e0e0e0 !important;
+    }
+    
+    .streamlit-expanderContent {
+        background: #fafafa;
+        border-radius: 0 0 10px 10px;
+    }
+    
+    /* Divider */
+    .stDivider {
+        border-color: #00d4ff !important;
+    }
+    
+    /* Column Headers */
+    h2 {
+        color: #1e3c72;
+        font-weight: 700;
+        margin-top: 1.5rem;
+        margin-bottom: 1rem;
+        text-align: center;
+    }
+    
+    h3 {
+        color: #2a5298;
+        font-weight: 600;
+    }
+    
+    /* Sidebar */
+    .sidebar-content {
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        color: white;
         padding: 1.5rem;
         border-radius: 10px;
-        border-left: 4px solid #667eea;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .header-container {
+            padding: 2rem 1.5rem;
+        }
+        
+        .header-container h1 {
+            font-size: 2rem;
+        }
+        
+        .input-section {
+            padding: 1.5rem;
+        }
     }
     </style>
 """, unsafe_allow_html=True)
@@ -175,75 +390,151 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 if page == "Home":
-    st.header("Welcome to Smart Crop Recommendation System")
+    st.markdown("""
+    <div class="header-container">
+        <h1>🌾 Smart Crop Recommendation System</h1>
+        <p>Intelligent AI-powered farming assistance for maximum yield</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.markdown("""
+        <div class="metric-card">
+            <h3>🎯 Smart Predictions</h3>
+            <p>Get AI-powered crop recommendations based on your soil and climate conditions with confidence scores</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div class="metric-card">
+            <h3>📊 Yield Analysis</h3>
+            <p>Predict your crop yield and optimize resources for better productivity and profitability</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col3:
+        st.markdown("""
+        <div class="metric-card">
+            <h3>🧪 Fertilizer Guide</h3>
+            <p>Get personalized fertilizer recommendations based on soil health and crop requirements</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    st.markdown("---")
+    
+    st.markdown("<h2>📖 How to Use</h2>", unsafe_allow_html=True)
+    
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.markdown("""
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1.5rem; border-radius: 10px; text-align: center;">
+            <h3 style="color: white; margin-top: 0;">Step 1️⃣</h3>
+            <p>Enter your soil parameters</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 1.5rem; border-radius: 10px; text-align: center;">
+            <h3 style="color: white; margin-top: 0;">Step 2️⃣</h3>
+            <p>Get recommendations</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col3:
+        st.markdown("""
+        <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 1.5rem; border-radius: 10px; text-align: center;">
+            <h3 style="color: white; margin-top: 0;">Step 3️⃣</h3>
+            <p>Plan your farming</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    st.markdown("---")
+    
+    st.markdown("<h2>⚡ Quick Start</h2>", unsafe_allow_html=True)
     
     col1, col2 = st.columns(2)
     
     with col1:
         st.markdown("""
-        ### About This System
-        
-        This intelligent system helps farmers and agricultural specialists:
-        - **Predict** the best crops for their land
-        - **Optimize** resource allocation
-        - **Maximize** crop yields
-        - **Plan** effective farming strategies
-        
-        ### Key Features
-        - 🎯 Accurate crop predictions
-        - 📊 Detailed data analysis
-        - 📈 Performance metrics
-        - 🔄 Real-time recommendations
+        **🌱 What You'll Get:**
+        - ✅ Top 3 crop recommendations
+        - ✅ Confidence scores for each crop
+        - ✅ Expected yield predictions
+        - ✅ Fertilizer recommendations
+        - ✅ Alternative crop options
         """)
     
     with col2:
-        st.info("""
-        #### How to Use
-        
-        1. Go to **Prediction** page
-        2. Enter soil and climate parameters
-        3. Click "Get Recommendation"
-        4. View the recommended crops
-        5. Check **Analysis** for detailed insights
+        st.markdown("""
+        **📋 What You Need:**
+        - 🔹 Soil nutrients (N, P, K)
+        - 🔹 Soil pH level
+        - 🔹 Rainfall data
+        - 🔹 Temperature
+        - 🔹 Humidity percentage
         """)
 
 elif page == "Prediction":
-    st.header("Crop Prediction")
+    st.markdown("""
+    <div class="header-container">
+        <h1>🌿 Crop Recommendation</h1>
+        <p>Enter your soil and climate parameters to get personalized crop recommendations</p>
+    </div>
+    """, unsafe_allow_html=True)
     
-    st.info("Enter the soil and climate parameters below to get crop recommendations")
+    st.markdown("""
+    <div class="info-box">
+        📌 <b>Tip:</b> Use accurate soil testing data for better recommendations. Adjust values based on your farm conditions.
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("<h3>📊 Enter Soil Parameters</h3>", unsafe_allow_html=True)
     
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        nitrogen = st.slider("Nitrogen (N)", 0, 140, 50)
-        potassium = st.slider("Potassium (K)", 0, 205, 50)
+        st.markdown("<div class='slider-container'>", unsafe_allow_html=True)
+        nitrogen = st.slider("🔹 Nitrogen (N)", 0, 140, 50, help="Nitrogen content in soil (0-140 mg/kg)")
+        potassium = st.slider("🔹 Potassium (K)", 0, 205, 50, help="Potassium content in soil (0-205 mg/kg)")
+        st.markdown("</div>", unsafe_allow_html=True)
     
     with col2:
-        phosphorous = st.slider("Phosphorous (P)", 0, 145, 50)
-        ph = st.slider("pH Value", 3.5, 9.0, 6.5)
+        st.markdown("<div class='slider-container'>", unsafe_allow_html=True)
+        phosphorous = st.slider("🔹 Phosphorous (P)", 0, 145, 50, help="Phosphorous content in soil (0-145 mg/kg)")
+        ph = st.slider("🔹 pH Value", 3.5, 9.0, 6.5, help="Soil pH level (3.5-9.0)")
+        st.markdown("</div>", unsafe_allow_html=True)
     
     with col3:
-        rainfall = st.slider("Rainfall (mm)", 20, 250, 100)
-        temperature = st.slider("Temperature (°C)", 8.8, 43.7, 25.0)
-        humidity = st.slider("Humidity (%)", 0.0, 100.0, 70.0)
+        st.markdown("<div class='slider-container'>", unsafe_allow_html=True)
+        rainfall = st.slider("🔹 Rainfall (mm)", 20, 250, 100, help="Average annual rainfall (20-250 mm)")
+        temperature = st.slider("🔹 Temperature (°C)", 8.8, 43.7, 25.0, help="Average temperature (8.8-43.7°C)")
+        humidity = st.slider("🔹 Humidity (%)", 0.0, 100.0, 70.0, help="Average humidity (0-100%)")
     
-    if st.button("🌾 Get Recommendation", use_container_width=True):
+    st.markdown("</div>", unsafe_allow_html=True)
+    
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    if st.button("🌾 Get Recommendation", use_container_width=True, key="crop_recommendation"):
+        with st.spinner("🔄 Analyzing soil conditions and climate patterns..."):
 
-        st.success("Processing your request...")
+            # -----------------------------------------
+            # Create Input Data
+            # -----------------------------------------
 
-        # -----------------------------------------
-        # Create Input Data
-        # -----------------------------------------
-
-        input_data = pd.DataFrame({
-            "n": [nitrogen],
-            "p": [phosphorous],
-            "k": [potassium],
-            "temperature": [temperature],
-            "humidity": [humidity],
-            "ph": [ph],
-            "rainfall": [rainfall]
-        })
+            input_data = pd.DataFrame({
+                "n": [nitrogen],
+                "p": [phosphorous],
+                "k": [potassium],
+                "temperature": [temperature],
+                "humidity": [humidity],
+                "ph": [ph],
+                "rainfall": [rainfall]
+            })
 
         # -----------------------------------------
         # Feature Engineering
@@ -349,22 +640,69 @@ elif page == "Prediction":
             "crop_target_encoder"
         ].inverse_transform(prediction)
 
-        # -----------------------------------------
-        # Display Result
-        # -----------------------------------------
+        # Get prediction probabilities for all classes
+        if hasattr(resources["crop_model"], "predict_proba"):
+            proba = resources["crop_model"].predict_proba(input_scaled)[0]
+            top_3_idx = np.argsort(proba)[-3:][::-1]
+            top_3_crops = resources["crop_target_encoder"].inverse_transform(top_3_idx)
+            top_3_proba = proba[top_3_idx]
+            
+            # Display Result with Top 3 predictions
+            st.markdown("""
+            <div class="result-card">
+                <h2>🌾 Top Recommended Crop</h2>
+                <h3 style="font-size: 2rem; margin: 0.5rem 0;">""" + crop_name[0] + """</h3>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            st.markdown("<h3 style='text-align: center; color: #1e3c72; margin-top: 2rem;'>📊 Top 3 Crop Predictions</h3>", unsafe_allow_html=True)
+            
+            cols = st.columns(3)
+            for i, (crop, confidence) in enumerate(zip(top_3_crops, top_3_proba)):
+                with cols[i]:
+                    st.markdown(f"""
+                    <div class="prediction-item">
+                        <div class="prediction-rank">#{i+1}</div>
+                        <div class="prediction-name">{crop}</div>
+                        <div class="prediction-confidence">{confidence:.1%}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
+        else:
+            st.markdown(f"""
+            <div class="result-card">
+                <h2>🌾 Recommended Crop</h2>
+                <h3 style="font-size: 2rem; margin: 0.5rem 0;">{crop_name[0]}</h3>
+            </div>
+            """, unsafe_allow_html=True)
 
-        st.success(
-            f"🌾 Recommended Crop: **{crop_name[0]}**"
-        )
+        # Add explanation about confidence
+        with st.expander("ℹ️ Understanding the Predictions", expanded=True):
+            st.markdown("""
+            **📌 What This Means:**
+            - The model analyzes your soil nutrients, pH, climate, and rainfall
+            - It shows the top 3 most suitable crops for your conditions
+            - **Confidence %** shows how confident the model is about each recommendation
+            
+            **💡 Tips for Better Results:**
+            - Use soil testing data for accurate N, P, K values
+            - Consider your local climate and past crop performance
+            - All top 3 options are viable - choose based on market demand
+            - If confidence is low, consult agricultural experts
+            """)
 
     # =========================================================
     # Yield Prediction
     # ==========================================================
 
     st.divider()
-    st.header("📈 Yield Prediction")
+    st.markdown("""
+    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1.5rem; border-radius: 10px; margin-bottom: 1rem;">
+        <h2 style="color: white; margin-top: 0;">📈 Yield Prediction</h2>
+        <p>Estimate your crop yield based on agricultural conditions</p>
+    </div>
+    """, unsafe_allow_html=True)
 
-    with st.expander("Open Yield Prediction", expanded=True):
+    with st.expander("🔄 Open Yield Prediction", expanded=True):
 
         yield_encoders = resources["yield_feature_encoders"]
 
@@ -474,23 +812,42 @@ elif page == "Prediction":
                     .transform(yield_input[column])
                 )
 
+            # -----------------------------------------
+            # Scale Input
+            # -----------------------------------------
+
+            yield_scaled = resources[
+                "yield_scaler"
+            ].transform(yield_input)
+
+            # -----------------------------------------
+            # Predict Yield
+            # -----------------------------------------
+
             yield_prediction = resources[
                 "yield_model"
-            ].predict(yield_input)
+            ].predict(yield_scaled)
 
-            st.success(
-                f"📈 Predicted Yield: "
-                f"**{yield_prediction[0]:.2f} tons/hectare**"
-            )
+            st.markdown(f"""
+            <div class="result-card-secondary">
+                <h3 style="margin-top: 0; color: white;">📈 Predicted Yield</h3>
+                <h2 style="color: white; font-size: 2.2rem; margin: 0.5rem 0;">{yield_prediction[0]:.2f} <span style="font-size: 1.2rem;">tons/hectare</span></h2>
+            </div>
+            """, unsafe_allow_html=True)
     # ==========================================================
     # Fertilizer Recommendation
     # ==========================================================
 
     st.divider()
-    st.header("🧪 Fertilizer Recommendation")
+    st.markdown("""
+    <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 1.5rem; border-radius: 10px; margin-bottom: 1rem;">
+        <h2 style="color: white; margin-top: 0;">🧪 Fertilizer Recommendation</h2>
+        <p>Get personalized fertilizer recommendations for optimal crop growth</p>
+    </div>
+    """, unsafe_allow_html=True)
 
     with st.expander(
-        "Open Fertilizer Recommendation",
+        "🔄 Open Fertilizer Recommendation",
         expanded=True
     ):
 
@@ -765,48 +1122,86 @@ elif page == "Prediction":
                 fertilizer_prediction
             )
 
-            st.success(
-                f"🧪 Recommended Fertilizer: "
-                f"**{fertilizer_name[0]}**"
-            )
+            # Get prediction probabilities for all classes
+            if hasattr(resources["fertilizer_model"], "predict_proba"):
+                proba = resources["fertilizer_model"].predict_proba(fertilizer_input)[0]
+                top_3_idx = np.argsort(proba)[-3:][::-1]
+                top_3_ferts = resources["fertilizer_target_encoder"].inverse_transform(top_3_idx)
+                top_3_proba = proba[top_3_idx]
+                
+                st.markdown(f"""
+                <div class="result-card-secondary">
+                    <h3 style="margin-top: 0; color: white;">🧪 Recommended Fertilizer</h3>
+                    <h2 style="color: white; font-size: 2rem; margin: 0.5rem 0;">{fertilizer_name[0]}</h2>
+                </div>
+                """, unsafe_allow_html=True)
+                
+                st.markdown("<h3 style='text-align: center; color: #1e3c72; margin-top: 1.5rem;'>📊 Top 3 Options</h3>", unsafe_allow_html=True)
+                cols = st.columns(3)
+                for i, (fert, confidence) in enumerate(zip(top_3_ferts, top_3_proba)):
+                    with cols[i]:
+                        st.markdown(f"""
+                        <div class="prediction-item">
+                            <div class="prediction-rank">#{i+1}</div>
+                            <div class="prediction-name">{fert}</div>
+                            <div class="prediction-confidence">{confidence:.1%}</div>
+                        </div>
+                        """, unsafe_allow_html=True)
+            else:
+                st.markdown(f"""
+                <div class="result-card-secondary">
+                    <h3 style="margin-top: 0; color: white;">🧪 Recommended Fertilizer</h3>
+                    <h2 style="color: white; font-size: 2rem; margin: 0.5rem 0;">{fertilizer_name[0]}</h2>
+                </div>
+                """, unsafe_allow_html=True)
 
 elif page == "Analysis":
 
-    st.header("📊 Data Analysis & Model Insights")
+    st.markdown("""
+    <div class="header-container">
+        <h1>📊 Analysis & Insights</h1>
+        <p>Overview of the smart crop recommendation system</p>
+    </div>
+    """, unsafe_allow_html=True)
 
-    st.info(
-        "Overview of the machine learning models integrated "
-        "into the Smart Crop Recommendation System."
-    )
+    st.markdown("""
+    <div class="info-box">
+        <b>📌 System Overview:</b> This section provides insights into the machine learning models 
+        and features that power the Smart Crop Recommendation System.
+    </div>
+    """, unsafe_allow_html=True)
 
     # ==========================================================
     # System Statistics
     # ==========================================================
 
-    st.subheader("📌 System Statistics")
+    st.markdown("<h3>📊 System Statistics</h3>", unsafe_allow_html=True)
 
     col1, col2, col3 = st.columns(3)
 
     with col1:
-        st.metric(
-            "ML Models",
-            "3",
-            "Integrated"
-        )
+        st.markdown("""
+        <div class="metric-card">
+            <div style="font-size: 1.2rem; color: #00d4ff; font-weight: 700;">3</div>
+            <div style="color: #666;">ML Models Integrated</div>
+        </div>
+        """, unsafe_allow_html=True)
 
     with col2:
-        st.metric(
-            "Prediction Modules",
-            "3",
-            "Active"
-        )
+        st.markdown("""
+        <div class="metric-card">
+            <div style="font-size: 1.2rem; color: #00d4ff; font-weight: 700;">3</div>
+            <div style="color: #666;">Active Prediction Modules</div>
+        </div>
+        """, unsafe_allow_html=True)
 
     with col3:
-        st.metric(
-            "System Status",
-            "Ready",
-            "Operational"
-        )
+        st.markdown("""
+        <div class="metric-card">
+            <div style="font-size: 1.2rem; color: #00d4ff; font-weight: 700;">✅</div>
+            <div style="color: #666;">System Status: Operational</div>
+        </div>
+        """, unsafe_allow_html=True)
 
     st.divider()
 
@@ -814,7 +1209,7 @@ elif page == "Analysis":
     # Model Overview
     # ==========================================================
 
-    st.subheader("🤖 Model Overview")
+    st.markdown("<h3>🤖 Model Overview</h3>", unsafe_allow_html=True)
 
     model_data = pd.DataFrame({
         "Model Module": [
